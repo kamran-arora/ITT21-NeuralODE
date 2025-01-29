@@ -2,9 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
-np.random.seed(1)
+np.random.seed(10)
 # Population size
-N = 1 # Single individual for debugging
+N = 10 # Single individual for debugging
 
 # Fixed dose parameters
 av_weight = 70
@@ -41,8 +41,8 @@ print(f"V values: {V_values}")
 # Define the ODE system
 def pk_model(t, A, Ka, CL, V):
     A1, A2 = A
-    dA1_dt = -Ka * A1
-    dA2_dt = Ka * A1 - (CL / V) * A2
+    dA1_dt = -(Ka) * A1
+    dA2_dt = (Ka) * A1 - (CL / (V)) * A2
     return [dA1_dt, dA2_dt]
 
 # Storage for solutions
@@ -64,7 +64,7 @@ for i in range(N):
     numerical_data[i, :] = solution.y[1]
     
     # Corrected Analytical Solution 
-    A2_analytic = -44*(Dose * F * Ka / denominator) * (np.exp(-Ke * T) - np.exp(-(CL / V) * T))
+    A2_analytic = (Dose * F * Ka / denominator) * (np.exp(-(CL / V) * T)-np.exp(-Ka * T) )
     #A2_analytic = (Dose * F * Ka / denominator) * (1 - np.exp(-(CL / V) * T))
     # Add noise correctly
     A2_noisy = A2_analytic*np.exp(eps_list)
