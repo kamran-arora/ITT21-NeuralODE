@@ -64,7 +64,7 @@ for i in range(N):
     numerical_data[i, :] = solution.y[1]
     
     # Corrected Analytical Solution 
-    A2_analytic = (Dose * F * Ka / denominator) * (np.exp(-(CL / V) * T)-np.exp(-Ka * T) )
+    A2_analytic = (Dose *V *F * Ka / denominator) * (np.exp(-(CL / V) * T)-np.exp(-Ka * T) )
     #A2_analytic = (Dose * F * Ka / denominator) * (1 - np.exp(-(CL / V) * T))
     # Add noise correctly
     A2_noisy = A2_analytic*np.exp(eps_list)
