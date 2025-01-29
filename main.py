@@ -8,6 +8,8 @@ def pk_model(t, A, Ka, CL, V):
     dA2_dt = (Ka) * A1 - (CL / (V)) * A2
     return [dA1_dt, dA2_dt]
 
+
+
 def run_simulation(N=1, av_weight=70, Dose=1, F=1, sigma=0.05, t_start=0, t_end=10, dt=0.01):
     # Population size
     N = N
