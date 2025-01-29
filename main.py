@@ -8,7 +8,7 @@ def pk_model(t, A, Ka, CL, V):
     dA2_dt = (Ka) * A1 - (CL / (V)) * A2
     return [dA1_dt, dA2_dt]
 
-def run_simulation(N=10, av_weight=70, Dose=1, F=1, sigma=0.05, t_start=0, t_end=10, dt=0.01):
+def run_simulation(N=1, av_weight=70, Dose=1, F=1, sigma=0.05, t_start=0, t_end=10, dt=0.01):
     # Population size
     N = N
 
@@ -31,7 +31,7 @@ def run_simulation(N=10, av_weight=70, Dose=1, F=1, sigma=0.05, t_start=0, t_end
     # Generate inter-individual variability
     Omega = np.diag([W_ka**2, W_cl**2, W_v**2])
     eta_array = np.random.multivariate_normal([0, 0, 0], Omega, N)
-    eps_list = np.random.normal(0.0, sigma, len(T))  # Noise for each time point
+    
     Weightlist = np.random.normal(0, 0, N)  # Individual weights
 
     Ka_values = B_ka * np.exp(eta_array[:, 0])
@@ -60,7 +60,7 @@ def run_simulation(N=10, av_weight=70, Dose=1, F=1, sigma=0.05, t_start=0, t_end
         # Solve ODE numerically
         solution = solve_ivp(pk_model, [t_start, t_end], [Dose, 0], t_eval=T, args=(Ka, CL, V))
         numerical_data[i, :] = solution.y[1]
-        
+        eps_list = np.random.normal(0.0, sigma, len(T))  # Noise for each time point
         # Corrected Analytical Solution 
         A2_analytic = (Dose * V * F * Ka / denominator) * (np.exp(-(CL / V) * T) - np.exp(-Ka * T))
         # Add noise correctly
