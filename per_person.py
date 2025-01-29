@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
+import os
 
 def pk_model(t, A, Ka, CL, V):
     """The Pk model"""
@@ -9,9 +10,8 @@ def pk_model(t, A, Ka, CL, V):
     dA2_dt = (Ka) * A1 - (CL / (V)) * A2
     return [dA1_dt, dA2_dt]
 
-def run_simulation(trajectory_number = 10, av_weight=70, Dose=1, F=1, sigma=0.05, t_start=0, t_end=10, dt=0.01):
+def run_simulation(trajectory_number=10, av_weight=70, Dose=1, F=1, sigma=0.05, t_start=0, t_end=10, dt=0.01):
     # Population size
-   
     trajectory_number = trajectory_number
 
     # Fixed dose parameters
@@ -33,7 +33,6 @@ def run_simulation(trajectory_number = 10, av_weight=70, Dose=1, F=1, sigma=0.05
     # Generate inter-individual variability
     Omega = np.diag([W_ka**2, W_cl**2, W_v**2])
     eta_array = np.random.multivariate_normal([0, 0, 0], Omega, 1)
-
     eta_array = eta_array[0]
     
     Weightlist = np.random.normal(0, 0, 1)  # Individual weights
@@ -42,16 +41,13 @@ def run_simulation(trajectory_number = 10, av_weight=70, Dose=1, F=1, sigma=0.05
     CL = np.exp(B_cl + B_clwt * Weightlist + eta_array[0])
     V = B_v * np.exp(eta_array[0])
 
-    #Print the types of Ka, CL, v and shape
+    # Print the types of Ka, CL, V and shape
     print(f"CL values: {CL}")
     print(f"Ka values: {Ka}")
     print(f"V values: {V}")
 
-
-
-
     # Storage for solutions
-    analytic_data = np.full((trajectory_number, len(T)), np.nan)
+    traj_data = np.full((trajectory_number, len(T)), np.nan)
     numerical_data = np.full((1, len(T)), np.nan)
 
     # Ensure valid parameters
@@ -71,14 +67,21 @@ def run_simulation(trajectory_number = 10, av_weight=70, Dose=1, F=1, sigma=0.05
         # Add noise correctly
         A2_noisy = analytic_solution * np.exp(eps_list)
         
-        analytic_data[trajectories, :] = A2_noisy
-    print(f"The shape is: {analytic_data.shape}")
+        traj_data[trajectories, :] = A2_noisy
+
+    # Save data to files
+    os.makedirs('data', exist_ok=True)
+    np.save('data/traj_data_per_person.npy', traj_data)
+    np.save('data/ODE_per_person.npy', numerical_data)
+
+    # Print saved data
+    
+
     # Plot trajectories
     plt.figure(figsize=(8, 5))
-    plt.plot(T, numerical_data, linestyle='dashed', label=f"Numerical ", alpha=0.5)
+    plt.plot(T, numerical_data, linestyle='dashed', label="Numerical", alpha=0.5)
     for i in range(trajectory_number):
-        plt.plot(T, analytic_data[i, :], label=f"Analytical {i}", alpha=0.5)
-        
+        plt.plot(T, traj_data[i, :], label=f"Analytical {i}", alpha=0.5)
 
     plt.xlabel("Time (h)")
     plt.ylabel("Concentration")
