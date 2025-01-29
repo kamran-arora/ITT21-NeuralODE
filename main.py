@@ -7,15 +7,16 @@ np.random.seed(1)
 N = 1 # Single individual for debugging
 
 # Fixed dose parameters
+av_weight = 70
 Dose = 1   # Administered dose
 F = 1      # Bioavailability
 sigma = 0.01  # Variability (random noise)
 
 # Parameter variability and means
-W_ka, B_ka = 0.01, 1
-W_cl, B_cl = 0.05, 0.001
-W_v, B_v = 0.05, 2
-B_clwt = 0.05
+W_ka, B_ka = 0.3, 0.01*av_weight
+W_cl, B_cl = 0.3, 0.053*av_weight
+W_v, B_v = 0.3, 0.733*av_weight
+B_clwt = 0.0
 
 # Time settings
 t_start, t_end, dt = 0, 10, 0.01
