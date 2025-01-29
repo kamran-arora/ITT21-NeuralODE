@@ -14,7 +14,7 @@ sigma = 0.01  # Variability (random noise)
 
 # Parameter variability and means
 W_ka, B_ka = 0.3, 0.01*av_weight
-W_cl, B_cl = 0.3, 0.053*av_weight
+W_cl, B_cl = 0.3, np.log(0.053*av_weight)
 W_v, B_v = 0.3, 0.733*av_weight
 B_clwt = 0.0
 
@@ -30,7 +30,7 @@ Weightlist = np.random.normal(0, 0, N)  # Individual weights
 
 
 Ka_values = B_ka * np.exp(eta_array[:, 0])
-Ke_values = 1.7*B_ka * np.exp(eta_array[:, 0])
+Ke_values = B_ka * np.exp(eta_array[:, 0])
 CL_values = np.exp(B_cl + B_clwt * Weightlist + eta_array[:, 1])
 V_values = B_v * np.exp(eta_array[:, 2])
 
@@ -64,7 +64,7 @@ for i in range(N):
     numerical_data[i, :] = solution.y[1]
     
     # Corrected Analytical Solution 
-    A2_analytic = -(Dose * F * Ka / denominator) * (np.exp(-Ke * T) - np.exp(-(CL / V) * T))
+    A2_analytic = -44*(Dose * F * Ka / denominator) * (np.exp(-Ke * T) - np.exp(-(CL / V) * T))
     #A2_analytic = (Dose * F * Ka / denominator) * (1 - np.exp(-(CL / V) * T))
     # Add noise correctly
     A2_noisy = A2_analytic*np.exp(eps_list)
