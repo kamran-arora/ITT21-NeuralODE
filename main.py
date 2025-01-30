@@ -11,7 +11,7 @@ def pk_model(t, A, Ka, CL, V):
     return [dA1_dt, dA2_dt]
 
 def run_simulation(population_size=10, avg_weight=70, dose=1, bioavailability=1, noise_level=0.01, 
-                    time_start=0, time_end=10, time_step=0.4):
+                    time_start=0, time_end=10, time_step=0.01):
     """We run the simulation for a certain population size. Each person will be slightly different, with individual varied trajectories generated for each person"""
     print(f"Measurements are taken every {time_step*60} Minutes")
     print(f"we are measuring the responese for {population_size} people")

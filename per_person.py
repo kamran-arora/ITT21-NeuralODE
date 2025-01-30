@@ -11,7 +11,7 @@ def pk_model(t, A, Ka, CL, V):
     return [dA1_dt, dA2_dt]
 
 def run_simulation(num_trajectories=10, avg_weight=70, dose=1, bioavailability=1, noise_level=0.05, 
-                    time_start=0, time_end=10, time_step=0.4):
+                    time_start=0, time_end=10, time_step=0.01):
     
     print(f"Measurements are taken every {time_step*60} Minutes")
     # Parameter variability and means
@@ -37,7 +37,7 @@ def run_simulation(num_trajectories=10, avg_weight=70, dose=1, bioavailability=1
     print(f"V values: {v}")
 
     # Storage for solutions
-    analytical_solutions = np.full((num_trajectories, len(time_points)), np.nan)
+    noisy_solutions = np.full((num_trajectories, len(time_points)), np.nan)
     numerical_solution = np.full((1, len(time_points)), np.nan)
 
     # Ensure valid parameters
@@ -54,18 +54,18 @@ def run_simulation(num_trajectories=10, avg_weight=70, dose=1, bioavailability=1
         analytic_solution = (dose * v * bioavailability * ka / denominator) * (np.exp(-(cl / v) * time_points) - np.exp(-ka * time_points))
         noisy_solution = analytic_solution * np.exp(noise)
         
-        analytical_solutions[i, :] = noisy_solution
+        noisy_solutions[i, :] = noisy_solution
 
     # Save data to files
     os.makedirs('data', exist_ok=True)
-    np.save('data/analytical_solutions.npy', analytical_solutions)
-    np.save('data/numerical_solution.npy', numerical_solution)
+    np.save('data/noisy_solutions.npy', noisy_solutions)
+    np.save('data/ODE_solution.npy', numerical_solution)
 
     # Plot trajectories
     plt.figure(figsize=(8, 5))
     plt.plot(time_points, numerical_solution, linestyle='dashed', alpha=0.5)
     for i in range(num_trajectories):
-        plt.plot(time_points, analytical_solutions[i, :], alpha=0.5)
+        plt.plot(time_points, noisy_solutions[i, :], alpha=0.5)
 
     plt.xlabel("Time (h)")
     plt.ylabel("Concentration")
